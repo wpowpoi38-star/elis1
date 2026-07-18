@@ -6,12 +6,12 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstati
 
 // !!!!!!! ใส่คอนฟิก Firebase ของคุณที่นี่ !!!!!!!
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDPZnJtY35WtJm0tKU553d6__eeh399uHU",
+  authDomain: "elis-system.firebaseapp.com",
+  projectId: "elis-system",
+  storageBucket: "elis-system.firebasestorage.app",
+  messagingSenderId: "327878315493",
+  appId: "1:327878315493:web:bb89a044e3ac18f1e7330c"
 };
 
 // Initialize Firebase
