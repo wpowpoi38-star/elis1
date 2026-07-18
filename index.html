@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-LIS - ระบบสารสนเทศเพื่อการบริหารสินเชื่อ</title>
+    
+    <!-- Fonts: Sarabun -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ================= SECTION: LOGIN ================= -->
+    <div id="login-section" class="page-section active">
+        <div class="login-container">
+            <div class="login-header">
+                <h2><i class="fa-solid fa-building-columns"></i> e-LIS</h2>
+                <p>ระบบสารสนเทศเพื่อการบริหารสินเชื่อ</p>
+            </div>
+            
+            <div id="borrower-login-form">
+                <div class="input-group">
+                    <label>ชื่อผู้ใช้ (อีเมล)</label>
+                    <input type="email" id="login-email" placeholder="กรอกอีเมลของคุณ">
+                </div>
+                <div class="input-group">
+                    <label>รหัสผ่าน</label>
+                    <input type="password" id="login-password" placeholder="กรอกรหัสผ่าน">
+                </div>
+                <button class="btn btn-primary" onclick="loginWithEmail()"><i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ</button>
+                <div class="divider">หรือ</div>
+                <button class="btn btn-google" onclick="loginWithGoogle()"><i class="fa-brands fa-google"></i> ลงทะเบียน / เข้าสู่ระบบด้วย Google</button>
+                
+                <button class="btn btn-outline mt-4" onclick="toggleLoginForm('staff')"><i class="fa-solid fa-user-tie"></i> สำหรับเจ้าหน้าที่</button>
+            </div>
+
+            <div id="staff-login-form" style="display: none;">
+                <h3><i class="fa-solid fa-user-shield"></i> ระบบเจ้าหน้าที่</h3>
+                <div class="input-group">
+                    <label>ชื่อผู้ใช้ (Staff Username)</label>
+                    <input type="text" id="staff-username" placeholder="เช่น sxaiq54">
+                </div>
+                <div class="input-group">
+                    <label>รหัสผ่าน</label>
+                    <input type="password" id="staff-password" placeholder="กรอกรหัสผ่าน">
+                </div>
+                <button class="btn btn-primary" onclick="loginStaff()"><i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบเจ้าหน้าที่</button>
+                <button class="btn btn-text mt-4" onclick="toggleLoginForm('borrower')"><i class="fa-solid fa-arrow-left"></i> กลับไปหน้าผู้กู้</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SECTION: BORROWER PROFILE SETUP ================= -->
+    <div id="profile-section" class="page-section">
+        <div class="dashboard-container">
+            <div class="card">
+                <h3>ข้อมูลส่วนตัวผู้กู้</h3>
+                <p>กรุณากรอกข้อมูลให้ครบถ้วนเพื่อความรวดเร็วในการยื่นสินเชื่อ (สามารถข้ามได้)</p>
+                <div class="input-group">
+                    <label>ชื่อ - นามสกุล</label>
+                    <input type="text" id="profile-name">
+                </div>
+                <div class="input-group">
+                    <label>เบอร์โทรศัพท์</label>
+                    <input type="text" id="profile-phone">
+                </div>
+                <div class="input-group">
+                    <label>ที่อยู่</label>
+                    <textarea id="profile-address" rows="3"></textarea>
+                </div>
+                <div class="flex-row">
+                    <button class="btn btn-secondary" onclick="skipProfile()">ข้ามไปก่อน</button>
+                    <button class="btn btn-primary" onclick="saveProfile()">บันทึกข้อมูลและไปที่แดชบอร์ด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SECTION: BORROWER DASHBOARD ================= -->
+    <div id="borrower-dashboard" class="page-section">
+        <nav class="navbar">
+            <div class="nav-brand"><i class="fa-solid fa-building-columns"></i> e-LIS (ผู้กู้)</div>
+            <div class="nav-user">
+                <span id="borrower-display-name"></span>
+                <button class="btn btn-outline btn-sm" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</button>
+            </div>
+        </nav>
+        <div class="dashboard-container">
+            <h3><i class="fa-solid fa-hand-holding-dollar"></i> สินเชื่อที่เปิดให้บริการ</h3>
+            <div class="grid-cards" id="available-loans-container">
+                <!-- Loan Cards จะถูกสร้างที่นี่โดย JS -->
+            </div>
+
+            <h3 class="mt-4"><i class="fa-solid fa-clock-rotate-left"></i> ประวัติและสถานะการขอยื่นสินเชื่อ</h3>
+            <div id="application-history-container">
+                <!-- Application Status จะถูกสร้างที่นี่โดย JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SECTION: STAFF DASHBOARD ================= -->
+    <div id="staff-dashboard" class="page-section">
+        <nav class="navbar nav-staff">
+            <div class="nav-brand"><i class="fa-solid fa-user-shield"></i> e-LIS Management</div>
+            <div class="nav-user">
+                <span id="staff-display-name"></span>
+                <button class="btn btn-outline btn-sm text-white" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</button>
+            </div>
+        </nav>
+        <div class="dashboard-container">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchStaffTab('overview')">แดชบอร์ดรวม</button>
+                <button class="tab-btn" onclick="switchStaffTab('manage-loans')">จัดการสินเชื่อ</button>
+                <button class="tab-btn" onclick="switchStaffTab('manage-staff')">จัดการสิทธิ์เจ้าหน้าที่</button>
+            </div>
+
+            <!-- Staff Tab: Overview -->
+            <div id="tab-overview" class="tab-content active">
+                <div class="flex-between align-center mb-3">
+                    <h3>สถานะคำขอสินเชื่อ</h3>
+                    <div>
+                        <input type="date" id="filter-date" class="input-sm">
+                        <button class="btn btn-secondary btn-sm" onclick="exportDashboard('pdf')"><i class="fa-solid fa-file-pdf"></i> ส่งออก PDF</button>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card blue">
+                        <h4>รออัปเดตสถานะ</h4>
+                        <h2 id="stat-waiting">0</h2>
+                    </div>
+                    <div class="stat-card yellow">
+                        <h4>กำลังตรวจสอบ</h4>
+                        <h2 id="stat-reviewing">0</h2>
+                    </div>
+                    <div class="stat-card green">
+                        <h4>อนุมัติแล้ว</h4>
+                        <h2 id="stat-approved">0</h2>
+                    </div>
+                    <div class="stat-card red">
+                        <h4>ไม่อนุมัติ</h4>
+                        <h2 id="stat-rejected">0</h2>
+                    </div>
+                </div>
+                <div class="table-responsive mt-4">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>เลขที่คำขอ</th>
+                                <th>ผู้กู้</th>
+                                <th>สินเชื่อ</th>
+                                <th>สถานะปัจจุบัน</th>
+                                <th>จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staff-application-list">
+                            <!-- JS Generates -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Staff Tab: Manage Loans -->
+            <div id="tab-manage-loans" class="tab-content">
+                <div class="flex-between align-center mb-3">
+                    <h3>รายการสินเชื่อในระบบ</h3>
+                    <button class="btn btn-primary" onclick="openCreateLoanModal()"><i class="fa-solid fa-plus"></i> เพิ่มสินเชื่อใหม่</button>
+                </div>
+                <div class="grid-cards" id="staff-loans-list">
+                    <!-- JS Generates -->
+                </div>
+            </div>
+
+            <!-- Staff Tab: Manage Staff -->
+            <div id="tab-manage-staff" class="tab-content">
+                <div class="flex-between align-center mb-3">
+                    <h3>จัดการข้อมูลเจ้าหน้าที่</h3>
+                    <button class="btn btn-primary" onclick="openCreateStaffModal()"><i class="fa-solid fa-user-plus"></i> เพิ่มเจ้าหน้าที่</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ชื่อ - สกุล</th>
+                            <th>ตำแหน่ง</th>
+                            <th>อีเมล</th>
+                            <th>สิทธิ์การใช้งาน</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staff-users-list">
+                        <!-- JS Generates -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals (Hidden by default) -->
+    <!-- Create Loan Modal -->
+    <div id="modal-create-loan" class="modal">
+        <div class="modal-content modal-lg">
+            <span class="close" onclick="closeModal('modal-create-loan')">&times;</span>
+            <h2>สร้างสินเชื่อใหม่</h2>
+            <div class="input-group">
+                <label>1. ชื่อสินเชื่อ</label>
+                <input type="text" id="loan-name">
+            </div>
+            <div class="input-group">
+                <label>2. รหัสสินเชื่อ (เว้นว่างเพื่อให้ระบบสุ่มรันอัตโนมัติ)</label>
+                <input type="text" id="loan-id" placeholder="เช่น LN-2026-001">
+            </div>
+            <div class="input-group">
+                <label>3. วงเงิน (บาท)</label>
+                <input type="number" id="loan-limit">
+            </div>
+            <div class="input-group">
+                <label>4. รายละเอียดสินเชื่อ</label>
+                <textarea id="loan-details" rows="3"></textarea>
+            </div>
+            <div class="input-group">
+                <label>5. เงื่อนไขการพิจารณา</label>
+                <textarea id="loan-conditions" rows="3"></textarea>
+            </div>
+            <div class="grid-2-col">
+                <div class="input-group">
+                    <label>6. วันที่/เวลาที่เริ่มยื่นได้</label>
+                    <input type="datetime-local" id="loan-start-date">
+                </div>
+                <div class="input-group">
+                    <label>7. วันที่/เวลาที่หมดเขต</label>
+                    <input type="datetime-local" id="loan-end-date">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>8. อัปโหลดหนังสือขออนุญาต (PDF)</label>
+                <a href="https://drive.google.com/file/d/13mCe6T6Q4pNbd3vrX6t3aYcYlAS6QrxC/view?usp=drivesdk" target="_blank" class="btn btn-outline btn-sm mb-2"><i class="fa-solid fa-download"></i> ดาวน์โหลดแบบฟอร์ม</a>
+                <input type="file" id="loan-pdf-file" accept="application/pdf">
+            </div>
+            <div class="input-group">
+                <label>9. ข้อมูลที่ต้องการเพิ่มเติมจากผู้กู้ (Dynamic Fields)</label>
+                <div id="dynamic-fields-container" class="border-box mb-2">
+                    <label><input type="checkbox" id="req-gps"> ต้องการตำแหน่งพิกัด GPS ปัจจุบัน</label>
+                </div>
+            </div>
+            <button class="btn btn-primary w-100" onclick="submitCreateLoan()">บันทึกการสร้างสินเชื่อ</button>
+        </div>
+    </div>
+
+    <!-- Module Type JS -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
