@@ -336,3 +336,13 @@ window.exportDashboard = (type) => {
         html2pdf().from(element).save('e-LIS-Report.pdf');
     }
 };
+// เพิ่มส่วนนี้ในไฟล์ app.js เพื่อดักฟังสถานะล็อกอิน
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // ถ้ามี User ล็อกอินอยู่แล้ว ให้ตรวจสอบสิทธิ์แล้วพาไปหน้า Dashboard
+        checkUserRole(user, 'borrower'); 
+    } else {
+        // ถ้าไม่มี User ให้กลับไปหน้า Login
+        window.switchPage('login-section');
+    }
+});
